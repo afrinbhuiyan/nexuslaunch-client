@@ -11,7 +11,7 @@ const FeaturedProducts = () => {
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const [voted, setVoted] = useState([]);
-        console.log(products);
+  console.log(products);
   useEffect(() => {
     axiosSecure
       .get("/api/products/featured")
@@ -35,7 +35,10 @@ const FeaturedProducts = () => {
     }
 
     try {
-      const res = await axiosSecure.patch(`/api/products/upvote/${productId}`);
+      const res = await axiosSecure.patch(`/api/products/vote/${productId}`, {
+        email: user?.email,
+      });
+
       if (res.data.success) {
         toast.success("Thanks for voting!");
         setProducts((prev) =>
@@ -46,6 +49,8 @@ const FeaturedProducts = () => {
           )
         );
         setVoted((prev) => [...prev, productId]);
+      } else {
+        toast.error(res.data.message || "Voting failed.");
       }
     } catch (err) {
       console.error(err);
