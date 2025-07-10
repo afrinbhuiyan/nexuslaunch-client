@@ -1,9 +1,10 @@
 import React from 'react';
+import FeaturedProducts from '../components/products/FeaturedProducts';
 
 const Home = () => {
     return (
         <div>
-            Hello World I am Home
+            <FeaturedProducts/>
         </div>
     );
 };

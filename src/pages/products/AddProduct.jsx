@@ -1,9 +1,9 @@
 import React, { useState, useRef, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { WithContext as ReactTags } from "react-tag-input";
-import useAuth from "../../hooks/useAuth";
 import { uploadImageToImgBB } from "../../utils/imageUpload";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
 
 const KeyCodes = {
   comma: 188,
@@ -72,7 +72,7 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!imageURL) return toast.error("⚠️ Please upload an image first!");
     if (tags.length === 0) return toast.error("⚠️ Please add at least one tag");
 
@@ -98,14 +98,14 @@ const AddProduct = () => {
 
     setIsSubmitting(true);
     try {
-      const { data } = await axiosSecure.post("api/products/add", productData);
-      console.log(data)
-      if (data.success) {
-        toast.success("🎉 Product added successfully!");
-        formRef.current?.reset();
-        setTags([]);
-        setImageURL("");
-      }
+      const { data } = await axiosSecure.post("/api/products/add", productData);
+      console.log(data);
+      // if (data.success) {
+      //   toast.success("🎉 Product added successfully!");
+      //   formRef.current?.reset();
+      //   setTags([]);
+      //   setImageURL("");
+      // }
     } catch (error) {
       console.error("Submission error:", error);
       toast.error(error.response?.data?.message || "❌ Failed to add product.");
@@ -161,8 +161,8 @@ const AddProduct = () => {
             </div>
             <div>
               <label className="block mb-1 font-medium">Pricing Model</label>
-              <select 
-                name="pricing" 
+              <select
+                name="pricing"
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="Free">Free</option>
@@ -192,8 +192,10 @@ const AddProduct = () => {
                   tags: "flex flex-wrap gap-2 mb-2",
                   tagInput: "w-full",
                   tag: "bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center",
-                  remove: "ml-1 text-blue-500 hover:text-blue-700 cursor-pointer",
-                  suggestions: "absolute z-10 bg-white border rounded shadow-lg mt-1 w-full",
+                  remove:
+                    "ml-1 text-blue-500 hover:text-blue-700 cursor-pointer",
+                  suggestions:
+                    "absolute z-10 bg-white border rounded shadow-lg mt-1 w-full",
                   activeSuggestion: "bg-blue-50",
                 }}
               />
@@ -241,8 +243,19 @@ const AddProduct = () => {
                   onClick={() => setImageURL("")}
                   className="mt-2 text-sm text-red-500 hover:text-red-700 flex items-center"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
                   </svg>
                   Remove Image
                 </button>
@@ -258,7 +271,11 @@ const AddProduct = () => {
             <div className="avatar">
               <div className="w-10 h-10 rounded-full">
                 {user.photoURL ? (
-                  <img src={user.photoURL} alt="Owner" className="object-cover" />
+                  <img
+                    src={user.photoURL}
+                    alt="Owner"
+                    className="object-cover"
+                  />
                 ) : (
                   <div className="bg-gray-300 text-gray-600 flex items-center justify-center text-lg font-medium">
                     {user.displayName?.charAt(0) || user.email?.charAt(0)}
@@ -267,7 +284,9 @@ const AddProduct = () => {
               </div>
             </div>
             <div>
-              <p className="font-medium">{user.displayName || "Unknown User"}</p>
+              <p className="font-medium">
+                {user.displayName || "Unknown User"}
+              </p>
               <p className="text-sm text-gray-600">{user.email}</p>
             </div>
           </div>
