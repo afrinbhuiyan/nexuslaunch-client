@@ -10,6 +10,7 @@ import PrivateRoute from "./PrivateRoute";
 import AddProduct from "../pages/products/AddProduct";
 import AllProducts from "../pages/products/AllProducts";
 import ProductDetails from "../pages/products/ProductDetails";
+import MyProfile from "../components/dashboard/MyProfile";
 
 export const router = createBrowserRouter([
   {
@@ -27,9 +28,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/products/:id",
-        element: <PrivateRoute>
-          <ProductDetails/>
-        </PrivateRoute>
+        element: (
+          <PrivateRoute>
+            <ProductDetails />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/login",
@@ -48,6 +51,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: DashboardHome,
+      },
+      {
+        path: "products",
+        Component: AllProducts,
+      },
+      {
+        path: "profile",
+        Component: MyProfile,
       },
       {
         path: "add-product",
