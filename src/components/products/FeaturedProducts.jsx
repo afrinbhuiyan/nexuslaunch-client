@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { FaFireAlt } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAxios from "../../hooks/useAxios";
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const axiosSecure = useAxiosSecure();
+  const axiosSecure = useAxios();
   const [voted, setVoted] = useState([]);
   console.log(products);
   useEffect(() => {
