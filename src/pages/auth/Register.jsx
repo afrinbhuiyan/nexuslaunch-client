@@ -2,8 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import GoogleLoginButton from "../../components/auth/GoogleLoginButton";
-import useAuth from "../../hooks/useAuth";
 import { uploadImageToImgBB } from "../../utils/imageUpload";
+import useAuth from "../../hooks/useAuth";
+import saveUser from "../../utils/saveUser";
+import useAxios from "../../hooks/useAxios";
 
 const Register = () => {
   const { createUser, updateUserProfile } = useAuth();
@@ -15,11 +17,11 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const axiosSecure = useAxios();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate image type and size
       if (!file.type.match("image.*")) {
         toast.error("Please select an image file (JPEG, PNG, etc.)");
         return;
@@ -43,7 +45,6 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      // Basic form validation
       if (!name || !email || !password) {
         throw new Error("Please fill in all fields");
       }
@@ -51,9 +52,8 @@ const Register = () => {
         throw new Error("Password must be at least 6 characters");
       }
 
-      let photoURL = "https://i.ibb.co/4pDNDk1/avatar.png"; // Default avatar
+      let photoURL = "https://i.ibb.co/4pDNDk1/avatar.png";
 
-      // Upload image if selected
       if (image) {
         try {
           photoURL = await uploadImageToImgBB(image);
@@ -63,27 +63,27 @@ const Register = () => {
         }
       }
 
-      // Create user account
       const userCredential = await createUser(email, password);
-      console.log(userCredential);
 
-      // Update profile
       await updateUserProfile({
         displayName: name,
         photoURL: photoURL,
       });
 
-      toast.success("Registration successful! Redirecting...");
+      // ✅ Save user to DB
+      const saved = await saveUser(axiosSecure, userCredential.user);
+      if (!saved) {
+        toast.error("User registration failed to save in DB.");
+        return;
+      }
 
-      // Wait 1.5 seconds before navigating to ensure toast is visible
+      toast.success("Registration successful! Redirecting...");
       await new Promise((resolve) => setTimeout(resolve, 1500));
       navigate("/");
     } catch (error) {
       console.error("Registration error:", error);
 
-      // Improved error messages
       let errorMessage = "Registration failed. Please try again.";
-
       if (error.code === "auth/email-already-in-use") {
         errorMessage =
           "This email is already registered. Please login instead.";

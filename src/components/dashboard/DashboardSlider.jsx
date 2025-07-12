@@ -15,6 +15,7 @@ const DashboardSlider = ({ isOpen, closeSidebar }) => {
 
   const navItems = [
     { path: '/dashboard', name: 'Home', icon: <FiHome size={20} /> },
+    { path: '/dashboard/my-products', name: 'My Products', icon: <FaProductHunt size={20} /> },
     { path: '/dashboard/products', name: 'Products', icon: <FaProductHunt size={20} /> },
     { path: '/dashboard/profile', name: 'Profile', icon: <FiUser size={20} /> },
     { path: '/dashboard/settings', name: 'Settings', icon: <FiSettings size={20} /> },

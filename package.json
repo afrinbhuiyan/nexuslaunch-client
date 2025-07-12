@@ -33,6 +33,7 @@
     "react-slick": "^0.30.3",
     "react-tag-input": "^6.10.6",
     "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.22.2",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {

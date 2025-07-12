@@ -10,7 +10,12 @@ import PrivateRoute from "./PrivateRoute";
 import AddProduct from "../pages/products/AddProduct";
 import AllProducts from "../pages/products/AllProducts";
 import ProductDetails from "../pages/products/ProductDetails";
-import MyProfile from "../components/dashboard/MyProfile";
+import MyProfile from "../pages/dashboard/MyProfile";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import MyProducts from "../pages/dashboard/MyProducts";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export const router = createBrowserRouter([
   {
@@ -57,8 +62,16 @@ export const router = createBrowserRouter([
         Component: AllProducts,
       },
       {
+        path: "my-products",
+        Component: MyProducts,
+      },
+      {
         path: "profile",
-        Component: MyProfile,
+        element: (
+          <Elements stripe={stripePromise}>
+            <MyProfile />
+          </Elements>
+        ),
       },
       {
         path: "add-product",
