@@ -14,6 +14,7 @@ import MyProfile from "../pages/dashboard/MyProfile";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import MyProducts from "../pages/dashboard/MyProducts";
+import ProductReviewQueue from "../pages/dashboard/ProductReviewQueue";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -79,6 +80,12 @@ export const router = createBrowserRouter([
           <PrivateRoute>
             <AddProduct />
           </PrivateRoute>
+        ),
+      },
+      {
+        path: "review-products",
+        element: (
+            <ProductReviewQueue />
         ),
       },
     ],
