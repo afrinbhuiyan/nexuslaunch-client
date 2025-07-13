@@ -23,6 +23,7 @@ const DashboardSlider = ({ isOpen, closeSidebar }) => {
     { path: '/dashboard/review-products', name: 'Review Product', icon: <FiSettings size={20} /> },
     { path: '/dashboard/reports-products', name: 'Reported Contents', icon: <FiSettings size={20} /> },
     { path: '/dashboard/statistics', name: 'statistics', icon: <FiSettings size={20} /> },
+    { path: '/dashboard/manage-users', name: 'Manage Users', icon: <FiSettings size={20} /> },
   ];
 
   return (

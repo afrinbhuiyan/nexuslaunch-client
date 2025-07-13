@@ -17,6 +17,7 @@ import MyProducts from "../pages/dashboard/MyProducts";
 import ProductReviewQueue from "../pages/dashboard/ProductReviewQueue";
 import ReportedContents from "../pages/dashboard/ReportedContents";
 import StatisticsPage from "../pages/dashboard/StatisticsPage";
+import ManageUsersPage from "../pages/dashboard/ManageUsersPage";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -86,21 +87,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "review-products",
-        element: (
-            <ProductReviewQueue />
-        ),
+        element: <ProductReviewQueue />,
       },
       {
         path: "reports-products",
-        element: (
-            <ReportedContents/>
-        ),
+        element: <ReportedContents />,
       },
       {
         path: "statistics",
-        element: (
-            <StatisticsPage/>
-        ),
+        element: <StatisticsPage />,
+      },
+      {
+        path: "manage-users",
+        element: <ManageUsersPage />,
       },
     ],
   },
