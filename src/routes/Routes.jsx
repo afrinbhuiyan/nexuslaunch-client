@@ -15,6 +15,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import MyProducts from "../pages/dashboard/MyProducts";
 import ProductReviewQueue from "../pages/dashboard/ProductReviewQueue";
+import ReportedContents from "../pages/dashboard/ReportedContents";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -86,6 +87,12 @@ export const router = createBrowserRouter([
         path: "review-products",
         element: (
             <ProductReviewQueue />
+        ),
+      },
+      {
+        path: "reports-products",
+        element: (
+            <ReportedContents/>
         ),
       },
     ],

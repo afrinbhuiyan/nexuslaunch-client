@@ -21,6 +21,7 @@ const DashboardSlider = ({ isOpen, closeSidebar }) => {
     { path: '/dashboard/settings', name: 'Settings', icon: <FiSettings size={20} /> },
     { path: '/dashboard/add-product', name: 'Add Product', icon: <FiSettings size={20} /> },
     { path: '/dashboard/review-products', name: 'Review Product', icon: <FiSettings size={20} /> },
+    { path: '/dashboard/reports-products', name: 'Reported Contents', icon: <FiSettings size={20} /> },
   ];
 
   return (
@@ -37,7 +38,7 @@ const DashboardSlider = ({ isOpen, closeSidebar }) => {
       <aside className={`fixed lg:static z-30 w-64 h-full bg-white shadow-lg transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out`}>
         <div className="flex flex-col h-full p-4">
           <div className="flex items-center justify-between p-4 border-b">
-            <h1 className="text-xl font-bold text-primary">NexusLaunch</h1>
+            <h1 className="text-xl font-bold text-primary"><Link to={'/'}>NexusLaunch</Link></h1>
             <button 
               className="lg:hidden text-gray-500"
               onClick={closeSidebar}
