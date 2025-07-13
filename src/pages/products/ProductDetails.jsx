@@ -12,23 +12,18 @@ const ProductDetails = () => {
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  console.log(reports)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productRes, reviewRes, reportRes] = await Promise.all([
+        const [productRes, reviewRes] = await Promise.all([
           axiosSecure.get(`/api/products/${id}`),
           axiosSecure.get(`/api/reviews?productId=${id}`),
-          axiosSecure.get(`/api/reports?productId=${id}`),
         ]);
 
-        setProduct(productRes.data);
+        setProduct(productRes.data.product); // ⚠️ note .product from your backend
         setReviews(reviewRes.data);
-        setReports(reportRes.data);
       } catch (error) {
         toast.error("Failed to load product details");
       } finally {
@@ -40,19 +35,19 @@ const ProductDetails = () => {
   }, [id, axiosSecure]);
 
   const handleVote = async () => {
-    if (!user) {
-      toast.error("Please login to vote");
-      return;
-    }
+    if (!user) return toast.error("Please login to vote");
 
     if (product.owner?.email === user.email) {
-      toast.error("You cannot vote for your own product");
-      return;
+      return toast.error("You cannot vote for your own product");
+    }
+
+    if (product.voters?.includes(user.email)) {
+      return toast.error("You have already voted");
     }
 
     try {
       const res = await axiosSecure.patch(`/api/products/vote/${id}`, {
-        email: user?.email,
+        email: user.email,
       });
 
       if (res.data.success) {
@@ -69,18 +64,40 @@ const ProductDetails = () => {
   };
 
   const handleReport = async () => {
+    if (!user) return toast.error("Please login to report");
+
+    if (product.owner?.email === user.email) {
+      return toast.error("You cannot report your own product");
+    }
+
+    // check if user already reported
+    if (product.reports?.some((r) => r.reporterId === user.uid)) {
+      return toast.error("You have already reported this product");
+    }
+
     try {
-      await axiosSecure.post("/api/reports", {
+      const report = {
         productId: id,
-        reporterId: user?.uid,
+        reporterId: user.uid,
         reason: "Inappropriate content",
         timestamp: new Date(),
-      });
+      };
+
+      await axiosSecure.post("/api/reports", report);
+
       toast.success("Product reported");
+      setProduct((prev) => ({
+        ...prev,
+        reports: [...(prev.reports || []), report],
+      }));
     } catch {
       toast.error("Failed to report");
     }
   };
+
+  const hasVoted = product?.voters?.includes(user?.email);
+  const hasReported = product?.reports?.some((r) => r.reporterId === user?.uid);
+  const isOwner = product?.owner?.email === user?.email;
 
   if (loading)
     return (
@@ -95,7 +112,7 @@ const ProductDetails = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       <img
-        src={product.product.image}
+        src={product.product?.image || product.image}
         alt={product.name}
         className="w-full h-64 object-cover rounded-lg"
       />
@@ -136,15 +153,9 @@ const ProductDetails = () => {
       <div className="mt-4 flex gap-3 flex-wrap">
         <button
           onClick={handleVote}
-          disabled={
-            !user ||
-            product.voters?.includes(user?.email) ||
-            product.owner?.email === user?.email
-          }
+          disabled={!user || hasVoted || isOwner}
           className={`bg-blue-600 text-white px-4 py-2 rounded ${
-            !user ||
-            product.voters?.includes(user?.email) ||
-            product.owner?.email === user?.email
+            !user || hasVoted || isOwner
               ? "opacity-50 cursor-not-allowed"
               : "hover:bg-blue-700"
           }`}
@@ -154,12 +165,14 @@ const ProductDetails = () => {
 
         <button
           onClick={handleReport}
-          disabled={!user}
+          disabled={!user || hasReported || isOwner}
           className={`bg-red-500 text-white px-4 py-2 rounded ${
-            !user ? "opacity-50 cursor-not-allowed" : "hover:bg-red-600"
+            !user || hasReported || isOwner
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-red-600"
           }`}
         >
-          🚩 Report ({product.reportCount || 0})
+          🚩 Report ({product.reports?.length || 0})
         </button>
       </div>
 
