@@ -1,12 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase/firebase.config';
-import { AuthContext } from './AuthContext';
-
+import React, { useEffect, useState } from "react";
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  updateProfile,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../firebase/firebase.config";
+import { AuthContext } from "./AuthContext";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  console.log(role);
   const [loading, setLoading] = useState(true);
+
+  console.log(user);
 
   const googleProvider = new GoogleAuthProvider();
 
@@ -38,14 +49,31 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        try {
+          const res = await fetch(
+            `http://localhost:5000/api/users/${currentUser.email}`
+          );
+          const dbUser = await res.json();
+          setRole(dbUser.role || "user");
+          setUser({
+            ...currentUser,
+            role: dbUser.role || "user",
+            isSubscribed: dbUser.isSubscribed || false,
+            image: dbUser.image || currentUser.photoURL,
+          });
+        } catch (err) {
+          console.error("Failed to fetch user from DB:", err);
+          setUser({ ...currentUser, role: "user" });
+        }
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   // 4. Context Value
@@ -56,7 +84,9 @@ const AuthProvider = ({ children }) => {
     signInUser,
     googleLogin,
     logOut,
-    updateUserProfile
+    updateUserProfile,
+    setUser,
+    role,
   };
 
   return (

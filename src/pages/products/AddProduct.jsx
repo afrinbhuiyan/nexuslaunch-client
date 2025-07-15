@@ -100,12 +100,6 @@ const AddProduct = () => {
     try {
       const { data } = await axiosSecure.post("/api/products/add", productData);
       console.log(data);
-      // if (data.success) {
-      //   toast.success("🎉 Product added successfully!");
-      //   formRef.current?.reset();
-      //   setTags([]);
-      //   setImageURL("");
-      // }
     } catch (error) {
       console.error("Submission error:", error);
       toast.error(error.response?.data?.message || "❌ Failed to add product.");

@@ -2,18 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import useAxios from '../../hooks/useAxios';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 const ReportedContents = () => {
   const [reportedProducts, setReportedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const axios = useAxios();
+  const axiosSecure = useAxiosSecure();
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReportedProducts = async () => {
       try {
         // Fetch from products/reported endpoint
-        const res = await axios.get('/api/reports');
+        const res = await axiosSecure.get('/api/reports');
         setReportedProducts(res.data);
       } catch (error) {
         toast.error('Failed to load reported products');

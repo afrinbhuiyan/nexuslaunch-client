@@ -4,16 +4,18 @@ import { toast } from "react-hot-toast";
 import { FaFireAlt } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import useAxios from "../../hooks/useAxios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const axiosSecure = useAxios();
+  const axios = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [voted, setVoted] = useState([]);
   console.log(products);
   useEffect(() => {
-    axiosSecure
+    axios
       .get("/api/products/featured")
       .then((res) => {
         setProducts(res.data);
@@ -23,7 +25,7 @@ const FeaturedProducts = () => {
         console.error(err);
         toast.error("Failed to load featured products.");
       });
-  }, [axiosSecure]);
+  }, [axios]);
 
   const handleVote = async (productId) => {
     if (!user) {

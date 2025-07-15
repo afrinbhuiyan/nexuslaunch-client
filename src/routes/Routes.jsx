@@ -18,6 +18,10 @@ import ProductReviewQueue from "../pages/dashboard/ProductReviewQueue";
 import ReportedContents from "../pages/dashboard/ReportedContents";
 import StatisticsPage from "../pages/dashboard/StatisticsPage";
 import ManageUsersPage from "../pages/dashboard/ManageUsersPage";
+import ManageCouponPage from "../pages/dashboard/ManageCouponPage";
+import UserRoute from "./UserRoute";
+import ModeratorRoute from "./ModeratorRoute";
+import AdminRoute from "./AdminRoute";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -81,25 +85,53 @@ export const router = createBrowserRouter([
         path: "add-product",
         element: (
           <PrivateRoute>
-            <AddProduct />
+            <UserRoute>
+              <AddProduct />
+            </UserRoute>
           </PrivateRoute>
         ),
       },
       {
         path: "review-products",
-        element: <ProductReviewQueue />,
+        element: (
+          <PrivateRoute>
+            <ModeratorRoute>
+              <ProductReviewQueue />
+            </ModeratorRoute>
+          </PrivateRoute>
+        ),
       },
       {
         path: "reports-products",
-        element: <ReportedContents />,
+        element: (
+          <ModeratorRoute>
+            <ReportedContents />
+          </ModeratorRoute>
+        ),
       },
       {
         path: "statistics",
-        element: <StatisticsPage />,
+        element: (
+          <AdminRoute>
+            <StatisticsPage />
+          </AdminRoute>
+        ),
       },
       {
         path: "manage-users",
-        element: <ManageUsersPage />,
+        element: (
+          <AdminRoute>
+            <ManageUsersPage />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "manage-coupons",
+        element: (
+          <AdminRoute>
+            <ManageCouponPage />
+          </AdminRoute>
+        ),
       },
     ],
   },

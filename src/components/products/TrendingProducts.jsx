@@ -4,18 +4,20 @@ import { FaFireAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import useAxios from "../../hooks/useAxios";
 import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const TrendingProducts = () => {
   const [products, setProducts] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const axiosSecure = useAxios();
+  const axios = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [voted, setVoted] = useState([]);
 
   console.log(products);
 
   useEffect(() => {
-    axiosSecure
+    axios
       .get("/api/products/trending")
       .then((res) => {
         console.log("Trending products:", res.data); // Log the data
@@ -25,7 +27,7 @@ const TrendingProducts = () => {
         console.error("Error loading trending products:", err.response?.data);
         toast.error("Failed to load trending products");
       });
-  }, [axiosSecure]);
+  }, [axios]);
 
   const handleVote = async (productId) => {
     if (!user) return navigate("/login");

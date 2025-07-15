@@ -4,10 +4,12 @@ import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
 import useAxios from "../../hooks/useAxios";
 import UpdateProductModal from "../../components/products/UpdateProductModal"; // adjust path if needed
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const MyProducts = () => {
   const { user } = useAuth();
   const axios = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null); // ⭐
@@ -16,7 +18,7 @@ const MyProducts = () => {
   useEffect(() => {
     if (user?.email) {
       setLoading(true);
-      axios
+      axiosSecure
         .get(`/api/products/user/${user.email}`)
         .then((res) => {
           setProducts(Array.isArray(res.data) ? res.data : []);
@@ -32,13 +34,18 @@ const MyProducts = () => {
   // ⭐ Update product function passed to modal
   const handleUpdate = async (updatedData) => {
     try {
-      const res = await axios.patch(`/api/products/${selectedProduct._id}`, updatedData);
+      const res = await axios.patch(
+        `/api/products/${selectedProduct._id}`,
+        updatedData
+      );
       const updated = res.data;
 
       if (updated.modifiedCount > 0) {
         // Replace the updated product in the state
         setProducts((prev) =>
-          prev.map((p) => (p._id === selectedProduct._id ? { ...p, ...updatedData } : p))
+          prev.map((p) =>
+            p._id === selectedProduct._id ? { ...p, ...updatedData } : p
+          )
         );
       }
 

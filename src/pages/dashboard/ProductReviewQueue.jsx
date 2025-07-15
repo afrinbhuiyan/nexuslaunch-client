@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useAxios from "../../hooks/useAxios";
 import { Link } from "react-router-dom";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const ProductReviewQueue = () => {
   const [pendingProducts, setPendingProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const axios = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
     fetchPendingProducts();
@@ -14,7 +16,7 @@ const ProductReviewQueue = () => {
 
   const fetchPendingProducts = async () => {
     try {
-      const res = await axios.get("/api/products/pending");
+      const res = await axiosSecure.get("/api/products/pending");
       setPendingProducts(res.data);
     } catch (err) {
       console.error("Error fetching pending products", err);
@@ -42,9 +44,9 @@ const ProductReviewQueue = () => {
           status: action,
           ...(action === "rejected" && { isFeatured: false }), // Unfeature if rejected
         });
-        
+
         Swal.fire("Success!", `Product ${action}d.`, "success");
-        setPendingProducts(prev => prev.filter(p => p._id !== productId));
+        setPendingProducts((prev) => prev.filter((p) => p._id !== productId));
       } catch (err) {
         console.error(`${action} failed`, err);
         Swal.fire("Error", `Failed to ${action} product`, "error");
@@ -55,17 +57,17 @@ const ProductReviewQueue = () => {
   const handleFeatureToggle = async (productId, currentStatus) => {
     try {
       await axios.patch(`/api/products/${productId}/feature`, {
-        isFeatured: !currentStatus
+        isFeatured: !currentStatus,
       });
-      
-      setPendingProducts(prev => 
-        prev.map(product => 
-          product._id === productId 
+
+      setPendingProducts((prev) =>
+        prev.map((product) =>
+          product._id === productId
             ? { ...product, isFeatured: !currentStatus }
             : product
         )
       );
-      
+
       Swal.fire(
         "Success!",
         `Product ${!currentStatus ? "featured" : "unfeatured"}`,
@@ -92,8 +94,8 @@ const ProductReviewQueue = () => {
       {pendingProducts.length === 0 ? (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
           <p className="text-blue-800">No pending products to review.</p>
-          <Link 
-            to="/products" 
+          <Link
+            to="/products"
             className="text-blue-600 hover:underline mt-2 inline-block"
           >
             View all products
@@ -141,17 +143,21 @@ const ProductReviewQueue = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      product.status === "pending" 
-                        ? "bg-yellow-100 text-yellow-800" 
-                        : "bg-gray-100 text-gray-800"
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        product.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
                       {product.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => handleFeatureToggle(product._id, product.isFeatured)}
+                      onClick={() =>
+                        handleFeatureToggle(product._id, product.isFeatured)
+                      }
                       className={`px-3 py-1 text-xs rounded-full ${
                         product.isFeatured
                           ? "bg-purple-100 text-purple-800 hover:bg-purple-200"
@@ -169,13 +175,17 @@ const ProductReviewQueue = () => {
                       View
                     </Link>
                     <button
-                      onClick={() => handleStatusUpdate(product._id, "Approved")}
+                      onClick={() =>
+                        handleStatusUpdate(product._id, "Approved")
+                      }
                       className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700"
                     >
                       Approve
                     </button>
                     <button
-                      onClick={() => handleStatusUpdate(product._id, "Rejected")}
+                      onClick={() =>
+                        handleStatusUpdate(product._id, "Rejected")
+                      }
                       className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
                     >
                       Reject

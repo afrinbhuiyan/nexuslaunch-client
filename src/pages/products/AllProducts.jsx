@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import useAuth from "../../hooks/useAuth";
 import useAxios from "../../hooks/useAxios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AllProducts = () => {
-  const axiosSecure = useAxios();
+  const axios = useAxios();
+  const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -18,7 +20,7 @@ const AllProducts = () => {
   } = useQuery({
     queryKey: ["products", search],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/api/products?search=${search}`);
+      const res = await axios.get(`/api/products?search=${search}`);
       return res.data;
     },
   });
