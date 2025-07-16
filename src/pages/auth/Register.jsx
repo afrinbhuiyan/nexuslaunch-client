@@ -15,6 +15,7 @@ const Register = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const axiosSecure = useAxios();
@@ -70,7 +71,6 @@ const Register = () => {
         photoURL: photoURL,
       });
 
-      // ✅ Save user to DB
       const saved = await saveUser(axiosSecure, userCredential.user);
       if (!saved) {
         toast.error("User registration failed to save in DB.");
@@ -85,8 +85,7 @@ const Register = () => {
 
       let errorMessage = "Registration failed. Please try again.";
       if (error.code === "auth/email-already-in-use") {
-        errorMessage =
-          "This email is already registered. Please login instead.";
+        errorMessage = "This email is already registered. Please login instead.";
       } else if (error.code === "auth/weak-password") {
         errorMessage = "Password should be at least 6 characters";
       } else if (error.code === "auth/invalid-email") {
@@ -100,139 +99,155 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="card w-full max-w-md shadow-xl bg-white">
-        <div className="card-body p-6 sm:p-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center text-primary mb-4">
-            Create Account
-          </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Header Section */}
+          <div className="bg-indigo-600 py-5 px-6">
+            <h2 className="text-2xl font-bold text-white">Create Your Account</h2>
+            <p className="text-indigo-100">Join our community today</p>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Profile Image Upload */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Profile Image</span>
-                <span className="label-text-alt text-gray-500">Optional</span>
-              </label>
-              <div className="flex items-center gap-4">
-                <div className="avatar">
-                  <div className="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                    <img
-                      src={
-                        imagePreview || "https://i.ibb.co/4pDNDk1/avatar.png"
-                      }
-                      alt="Profile preview"
-                      className="object-cover"
-                    />
-                  </div>
+          <div className="p-6 sm:p-8">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Profile Image Upload */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Profile Image
+                  </label>
+                  <span className="text-xs text-gray-500">Optional</span>
                 </div>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline"
-                  onClick={() => fileInputRef.current.click()}
-                  disabled={isLoading}
-                >
-                  {image ? "Change" : "Upload"}
-                </button>
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-indigo-500">
+                      <img
+                        src={imagePreview || "https://i.ibb.co/4pDNDk1/avatar.png"}
+                        alt="Profile preview"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current.click()}
+                    disabled={isLoading}
+                    className="px-3 py-1.5 text-sm rounded-md border border-indigo-600 text-indigo-600 hover:bg-indigo-50 transition disabled:opacity-50"
+                  >
+                    {image ? "Change" : "Upload"}
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="hidden"
+                    disabled={isLoading}
+                  />
+                </div>
+                <p className="text-xs text-gray-500">Max 2MB (JPEG, PNG)</p>
+              </div>
+
+              {/* Name Field */}
+              <div className="space-y-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
                 <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="hidden"
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition disabled:opacity-70"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
                   disabled={isLoading}
                 />
               </div>
-              <label className="label">
-                <span className="label-text-alt text-gray-500">
-                  Max 2MB (JPEG, PNG)
-                </span>
-              </label>
-            </div>
 
-            {/* Name Field */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Full Name</span>
-              </label>
-              <input
-                type="text"
-                placeholder="John Doe"
-                className="input input-bordered w-full"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                disabled={isLoading}
-              />
-            </div>
+              {/* Email Field */}
+              <div className="space-y-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="email@example.com"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition disabled:opacity-70"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
 
-            {/* Email Field */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                placeholder="email@example.com"
-                className="input input-bordered w-full"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isLoading}
-              />
-            </div>
+              {/* Password Field */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-xs text-indigo-600 hover:text-indigo-800"
+                  >
+                    {showPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition disabled:opacity-70"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  disabled={isLoading}
+                />
+                <p className="text-xs text-gray-500">Minimum 6 characters</p>
+              </div>
 
-            {/* Password Field */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                className="input input-bordered w-full"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                disabled={isLoading}
-              />
-              <label className="label">
-                <span className="label-text-alt text-gray-500">
-                  Minimum 6 characters
-                </span>
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <div className="form-control mt-6">
+              {/* Submit Button */}
               <button
                 type="submit"
-                className="btn btn-primary w-full"
                 disabled={isLoading}
+                className={`w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 {isLoading ? (
-                  <>
-                    <span className="loading loading-spinner"></span>
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
                     Registering...
-                  </>
-                ) : (
-                  "Register"
-                )}
+                  </span>
+                ) : 'Register'}
               </button>
-            </div>
-          </form>
-          <GoogleLoginButton loading={isLoading} setLoading={setIsLoading} />
+            </form>
 
-          <p className="text-center mt-4">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="link link-primary hover:link-secondary"
-            >
-              Login here
-            </Link>
-          </p>
+            <div className="my-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                </div>
+              </div>
+            </div>
+
+            <GoogleLoginButton loading={isLoading} setLoading={setIsLoading} />
+
+            <p className="mt-6 text-center text-sm text-gray-600">
+              Already have an account?{" "}
+              <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                Login here
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
