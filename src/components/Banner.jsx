@@ -21,7 +21,7 @@ const Banner = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex justify-center min-h-[80vh] px-4 py-20 sm:px-6 lg:px-8 lg:pt-40">
+      <div className="relative z-10 flex justify-center min-h-[90vh] px-4 py-20 sm:px-6 lg:px-8 lg:pt-32">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -32,7 +32,7 @@ const Banner = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+            className="text-4xl font-semibold tracking-tight text-white sm:text-5xl"
           >
             <span className="block mb-3">Innovate, Showcase,</span>
             <span className="block text-[#ffef10] font-sans">
@@ -44,7 +44,7 @@ const Banner = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="max-w-3xl mx-auto mt-6 text-xl leading-10 font-sans text-white"
+            className="max-w-2xl mx-auto mt-6 text-lg leading-10 font-sans text-white"
           >
             Join the premier platform for developers to launch, get feedback,
             and accelerate growth for your digital creations.
@@ -58,13 +58,13 @@ const Banner = () => {
           >
            { user ?  <Link
               to="/products"
-              className="px-8 py-4 text-lg font-semibold text-white transition-all duration-300 transform bg-[#766df4] rounded-lg shadow-lg hover:bg-[#9189ff] hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="px-8 py-3 font-semibold text-white transition-all duration-300 transform bg-[#766df4] rounded-lg shadow-lg hover:bg-[#9189ff] hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Explore Marketplace
             </Link> : null}
             <Link
               to="/dashboard"
-              className="px-8 py-4 text-lg font-semibold text-white transition-all duration-300 transform border-2 border-white rounded-lg hover:bg-white hover:bg-opacity-10 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 hover:text-[#d4ca03]"
+              className="px-8 py-3 font-semibold text-white transition-all duration-300 transform border-2 border-white rounded-lg hover:bg-white hover:bg-opacity-10 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 hover:text-[#d4ca03]"
             >
               Submit Your Project
             </Link>
