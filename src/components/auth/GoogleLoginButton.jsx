@@ -35,7 +35,6 @@ const GoogleLoginButton = ({ loading, setLoading }) => {
 
   return (
     <>
-      <div className="divider">OR</div>
       <button
         onClick={handleGoogleLogin}
         className="btn btn-outline w-full gap-2"
