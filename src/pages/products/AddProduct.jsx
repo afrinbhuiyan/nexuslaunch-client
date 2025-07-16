@@ -1,9 +1,10 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { WithContext as ReactTags } from "react-tag-input";
 import { uploadImageToImgBB } from "../../utils/imageUpload";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const KeyCodes = {
   comma: 188,
@@ -20,8 +21,40 @@ const AddProduct = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageURL, setImageURL] = useState("");
   const [tags, setTags] = useState([]);
+  const [canAdd, setCanAdd] = useState(true);
   const reactTagsRef = useRef(null);
   const formRef = useRef(null);
+  const navigate = useNavigate();
+
+  // Check add permission based on subscription and product count
+  useEffect(() => {
+    const checkAddPermission = async () => {
+      try {
+        const subRes = await axiosSecure.get(
+          `/api/users/subscription-status?email=${user.email}`
+        );
+        const isSubscribed = subRes.data?.isSubscribed;
+
+        if (!isSubscribed) {
+          const countRes = await axiosSecure.get(
+            `/api/products/user-count?email=${user.email}`
+          );
+          const productCount = countRes.data.count || 0;
+
+          if (productCount >= 1) {
+            setCanAdd(false);
+          }
+        }
+      } catch (err) {
+        console.error("Permission check failed:", err);
+        toast.error("Failed to check add permission.");
+      }
+    };
+
+    if (user?.email) {
+      checkAddPermission();
+    }
+  }, [user?.email, axiosSecure]);
 
   const handleImageUpload = async (e) => {
     const imageFile = e.target.files[0];
@@ -99,10 +132,19 @@ const AddProduct = () => {
     setIsSubmitting(true);
     try {
       const { data } = await axiosSecure.post("/api/products/add", productData);
-      console.log(data);
+      toast.success("✅ Product submitted successfully!");
+      formRef.current.reset();
+      setImageURL("");
+      setTags([]);
+      navigate("/dashboard/my-products");
     } catch (error) {
-      console.error("Submission error:", error);
-      toast.error(error.response?.data?.message || "❌ Failed to add product.");
+      const msg = error.response?.data?.message;
+      if (msg?.includes("Only one product")) {
+        toast.error("You've used your free product slot. Please subscribe.");
+        navigate("/dashboard/profile");
+      } else {
+        toast.error(msg || "❌ Failed to add product.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -111,6 +153,18 @@ const AddProduct = () => {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
+
+      {!canAdd && (
+        <div className="bg-yellow-100 text-yellow-800 px-4 py-3 rounded mb-6">
+          You’ve already added your free product.{" "}
+          <button
+            onClick={() => navigate("/dashboard/profile")}
+            className="text-blue-600 underline font-semibold ml-1"
+          >
+            Subscribe to add more.
+          </button>
+        </div>
+      )}
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
         {/* Product Information */}

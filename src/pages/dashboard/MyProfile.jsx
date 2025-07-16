@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import useAxios from "../../hooks/useAxios";
 
 const MyProfile = () => {
   const { user } = useAuth();
-  const axiosSecure = useAxiosSecure();
+  const axiosSecure = useAxios();
   const stripe = useStripe();
   const elements = useElements();
+
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [coupon, setCoupon] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user?.email) {
-      axiosSecure.get(`/api/users/subscription-status?email=${user.email}`)
-        .then(res => {
+      axiosSecure
+        .get(`/api/payment/subscription-status?email=${user.email}`)
+        .then((res) => {
           setIsSubscribed(res.data?.isSubscribed);
         })
         .catch(() => toast.error("Failed to fetch subscription status"));
@@ -34,13 +37,15 @@ const MyProfile = () => {
 
     if (error) {
       toast.error(error.message);
-      return setLoading(false);
+      setLoading(false);
+      return;
     }
 
     try {
       const res = await axiosSecure.post("/api/payment/create-payment-intent", {
-        amount: 500,
+        amount: 5 * 100, // $5 in cents
         email: user.email,
+        couponCode: coupon.trim(),
       });
 
       const { clientSecret } = res.data;
@@ -50,13 +55,13 @@ const MyProfile = () => {
       });
 
       if (confirmResult.paymentIntent.status === "succeeded") {
-        await axiosSecure.patch(`/api/users/subscribe?email=${user.email}`);
+        await axiosSecure.patch(`/api/payment/subscribe?email=${user.email}`);
         toast.success("Subscription successful!");
         setIsSubscribed(true);
         setShowPaymentForm(false);
       }
     } catch (err) {
-      toast.error("Subscription failed.");
+      toast.error(err.response?.data?.message || "Subscription failed.");
     } finally {
       setLoading(false);
     }
@@ -85,10 +90,17 @@ const MyProfile = () => {
 
       {showPaymentForm && (
         <form onSubmit={handleSubscribe} className="mt-4 space-y-4">
+          <input
+            type="text"
+            value={coupon}
+            onChange={(e) => setCoupon(e.target.value)}
+            placeholder="Enter coupon code (optional)"
+            className="w-full border p-2 rounded"
+          />
           <CardElement className="border p-2 rounded" />
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !stripe || !elements}
             className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
           >
             {loading ? "Processing..." : "Pay $5 and Subscribe"}

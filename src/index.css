@@ -1,2 +1,22 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+.body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #6c5ce7 0%, #5742d8 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.background-shape {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: rgb(255, 255, 255);
+    transform: skewY(-3deg);
+    transform-origin: top left;
+    z-index: 1;
+}
