@@ -222,9 +222,6 @@ const Register = () => {
               </button>
             </div>
           </form>
-
-          <div className="divider">OR</div>
-
           <GoogleLoginButton loading={isLoading} setLoading={setIsLoading} />
 
           <p className="text-center mt-4">

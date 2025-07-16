@@ -5,6 +5,15 @@ import { uploadImageToImgBB } from "../../utils/imageUpload";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import {
+  FiUpload,
+  FiX,
+  FiUser,
+  FiTag,
+  FiLink,
+  FiDollarSign,
+  FiGrid,
+} from "react-icons/fi";
 
 const KeyCodes = {
   comma: 188,
@@ -26,7 +35,6 @@ const AddProduct = () => {
   const formRef = useRef(null);
   const navigate = useNavigate();
 
-  // Check add permission based on subscription and product count
   useEffect(() => {
     const checkAddPermission = async () => {
       try {
@@ -151,215 +159,385 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
-
-      {!canAdd && (
-        <div className="bg-yellow-100 text-yellow-800 px-4 py-3 rounded mb-6">
-          You’ve already added your free product.{" "}
-          <button
-            onClick={() => navigate("/dashboard/profile")}
-            className="text-blue-600 underline font-semibold ml-1"
-          >
-            Subscribe to add more.
-          </button>
-        </div>
-      )}
-
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
-        {/* Product Information */}
-        <div className="space-y-4">
-          <div>
-            <label className="block mb-1 font-medium">Product Name *</label>
-            <input
-              name="name"
-              type="text"
-              required
-              maxLength={100}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter product name"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Description *</label>
-            <textarea
-              name="description"
-              required
-              maxLength={500}
-              className="w-full p-2 border rounded h-32 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Product description"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block mb-1 font-medium">Category *</label>
-              <select
-                name="category"
-                required
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select category</option>
-                <option value="Web App">Web Application</option>
-                <option value="Mobile App">Mobile Application</option>
-                <option value="SaaS">SaaS</option>
-                <option value="Tool">Developer Tool</option>
-              </select>
-            </div>
-            <div>
-              <label className="block mb-1 font-medium">Pricing Model</label>
-              <select
-                name="pricing"
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="Free">Free</option>
-                <option value="Freemium">Freemium</option>
-                <option value="Paid">Paid</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Tags *</label>
-            <div className="border rounded p-2 focus-within:ring-2 focus-within:ring-blue-500">
-              <ReactTags
-                ref={reactTagsRef}
-                tags={tags}
-                handleDelete={handleDelete}
-                handleAddition={handleAddition}
-                handleDrag={handleDrag}
-                delimiters={delimiters}
-                inputFieldPosition="inline"
-                placeholder="Type and press enter to add"
-                autocomplete={false}
-                allowDeleteFromEmptyInput={false}
-                minQueryLength={1}
-                maxLength={20}
-                classNames={{
-                  tags: "flex flex-wrap gap-2 mb-2",
-                  tagInput: "w-full",
-                  tag: "bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center",
-                  remove:
-                    "ml-1 text-blue-500 hover:text-blue-700 cursor-pointer",
-                  suggestions:
-                    "absolute z-10 bg-white border rounded shadow-lg mt-1 w-full",
-                  activeSuggestion: "bg-blue-50",
-                }}
-              />
-            </div>
-            <p className="text-sm text-gray-500 mt-1">
-              Add at least one tag (comma, enter, or space separated)
-            </p>
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium">External Link</label>
-            <input
-              name="externalLink"
-              type="url"
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="https://example.com"
-              pattern="https?://.+"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Product Image *</label>
-            <input
-              type="file"
-              onChange={handleImageUpload}
-              accept="image/*"
-              required
-              className="w-full p-2 border rounded file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
-            {loading && (
-              <div className="mt-2 text-blue-500 flex items-center">
-                <span className="loading loading-spinner loading-xs mr-2"></span>
-                Uploading image...
-              </div>
-            )}
-            {imageURL && (
-              <div className="mt-2">
-                <img
-                  src={imageURL}
-                  alt="Preview"
-                  className="h-40 object-contain border rounded"
-                />
-                <button
-                  type="button"
-                  onClick={() => setImageURL("")}
-                  className="mt-2 text-sm text-red-500 hover:text-red-700 flex items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 mr-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                  Remove Image
-                </button>
-              </div>
-            )}
-          </div>
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
+          <h2 className="text-2xl font-bold">Add New Product</h2>
+          <p className="text-indigo-100 mt-1">
+            Share your creation with the community
+          </p>
         </div>
 
-        {/* Owner Information */}
-        <div className="p-4 bg-gray-50 rounded-lg border">
-          <h3 className="font-medium mb-2">Owner Information</h3>
-          <div className="flex items-center space-x-3">
-            <div className="avatar">
-              <div className="w-10 h-10 rounded-full">
-                {user.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt="Owner"
-                    className="object-cover"
+        <form ref={formRef} onSubmit={handleSubmit} className="p-6 space-y-8">
+          {/* Product Information Section */}
+          <div className="space-y-6">
+            <div className="border-b border-gray-200 pb-5">
+              <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                <FiGrid className="mr-2 text-indigo-500" />
+                Product Information
+              </h3>
+            </div>
+
+            {/* Product Name */}
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+              >
+                Product Name *
+              </label>
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <div className="relative rounded-md shadow-sm">
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    required
+                    maxLength={100}
+                    className="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border"
+                    placeholder="My Awesome Product"
                   />
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+              >
+                Description *
+              </label>
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={4}
+                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md py-2 px-3"
+                  defaultValue={""}
+                  required
+                  maxLength={500}
+                  placeholder="Describe your product in detail..."
+                />
+                <p className="mt-2 text-sm text-gray-500">
+                  Maximum 500 characters
+                </p>
+              </div>
+            </div>
+
+            {/* Category and Pricing */}
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+              <label className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                Product Details
+              </label>
+              <div className="mt-1 sm:mt-0 sm:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="category"
+                    className="block text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Category *
+                  </label>
+                  <div className="mt-1 relative">
+                    <select
+                      id="category"
+                      name="category"
+                      required
+                      className="appearance-none block w-full bg-white border border-gray-300 rounded-md py-2 px-3 pr-10 text-base focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                      <option value="">Select category</option>
+                      <option value="Web App">Web Application</option>
+                      <option value="Mobile App">Mobile Application</option>
+                      <option value="SaaS">SaaS</option>
+                      <option value="Tool">Developer Tool</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg
+                        className="h-4 w-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="pricing"
+                    className="block text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Pricing Model
+                  </label>
+                  <div className="mt-1 relative">
+                    <select
+                      id="pricing"
+                      name="pricing"
+                      className="appearance-none block w-full bg-white border border-gray-300 rounded-md py-2 px-3 pr-10 text-base focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                      <option value="Free">Free</option>
+                      <option value="Freemium">Freemium</option>
+                      <option value="Paid">Paid</option>
+                    </select>
+                    <FiDollarSign className="pointer-events-none absolute right-3 top-2.5 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tags */}
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+              <label className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                Tags *
+              </label>
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <div
+                  className={`border ${
+                    tags.length === 0 ? "border-red-300" : "border-gray-300"
+                  } rounded-md p-2 focus-within:ring-1 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-colors`}
+                >
+                  <ReactTags
+                    ref={reactTagsRef}
+                    tags={tags}
+                    handleDelete={handleDelete}
+                    handleAddition={handleAddition}
+                    handleDrag={handleDrag}
+                    delimiters={delimiters}
+                    inputFieldPosition="inline"
+                    placeholder={
+                      tags.length === 0
+                        ? "Type and press enter to add tags..."
+                        : "Add another tag..."
+                    }
+                    autocomplete={false}
+                    allowDeleteFromEmptyInput={false}
+                    minQueryLength={1}
+                    maxLength={20}
+                    classNames={{
+                      tags: "flex flex-wrap gap-2 mb-1",
+                      tagInput: "inline-block w-full",
+                      tagInputField:
+                        "block w-full p-1 border-0 focus:ring-0 focus:outline-none text-sm",
+                      tag: "bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-full flex items-center text-sm font-medium",
+                      remove:
+                        "ml-1.5 text-indigo-500 hover:text-indigo-700 cursor-pointer text-xs",
+                      suggestions:
+                        "absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200",
+                      activeSuggestion: "bg-indigo-50",
+                    }}
+                  />
+                </div>
+                <p
+                  className={`mt-1 text-xs ${
+                    tags.length === 0 ? "text-red-500" : "text-gray-500"
+                  }`}
+                >
+                  {tags.length === 0
+                    ? "⚠️ Please add at least one tag"
+                    : "Add tags separated by comma, enter, or space"}
+                </p>
+                {tags.length > 0 && (
+                  <p className="mt-1 text-xs text-gray-400">
+                    {tags.length} tag{tags.length !== 1 ? "s" : ""} added
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* External Link */}
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+              <label
+                htmlFor="externalLink"
+                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+              >
+                External Link
+              </label>
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <div className="flex rounded-md shadow-sm">
+                  <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                    <FiLink className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="url"
+                    name="externalLink"
+                    id="externalLink"
+                    className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
+                    placeholder="https://example.com"
+                    pattern="https?://.+"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Image Upload */}
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+              <label className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                Product Image *
+              </label>
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                {!imageURL ? (
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                    <div className="space-y-1 text-center">
+                      <div className="flex text-sm text-gray-600 justify-center">
+                        <label
+                          htmlFor="file-upload"
+                          className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                        >
+                          <span>Upload an image</span>
+                          <input
+                            id="file-upload"
+                            name="file-upload"
+                            type="file"
+                            className="sr-only"
+                            onChange={handleImageUpload}
+                            accept="image/*"
+                            required
+                          />
+                        </label>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        PNG, JPG, GIF up to 5MB
+                      </p>
+                      {loading && (
+                        <div className="text-indigo-600 text-sm flex items-center justify-center">
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-indigo-600"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Uploading...
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 ) : (
-                  <div className="bg-gray-300 text-gray-600 flex items-center justify-center text-lg font-medium">
-                    {user.displayName?.charAt(0) || user.email?.charAt(0)}
+                  <div className="mt-2">
+                    <div className="relative group">
+                      <img
+                        src={imageURL}
+                        alt="Preview"
+                        className="h-48 w-full object-contain rounded-md border border-gray-300"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setImageURL("")}
+                        className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-sm text-gray-400 hover:text-gray-500 focus:outline-none group-hover:opacity-100 opacity-0 transition-opacity duration-200"
+                      >
+                        <FiX className="h-5 w-5" />
+                      </button>
+                    </div>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Image uploaded successfully
+                    </p>
                   </div>
                 )}
               </div>
             </div>
-            <div>
-              <p className="font-medium">
-                {user.displayName || "Unknown User"}
-              </p>
-              <p className="text-sm text-gray-600">{user.email}</p>
+          </div>
+
+          {/* Owner Information */}
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div className="border-b border-gray-200 pb-3 mb-3">
+              <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                <FiUser className="mr-2 text-indigo-500" />
+                Owner Information
+              </h3>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0 h-12 w-12 rounded-full bg-white border border-gray-200 overflow-hidden">
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="Owner"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl font-medium">
+                    {user.displayName?.charAt(0) || user.email?.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  {user.displayName || "Unknown User"}
+                </p>
+                <p className="text-sm text-gray-500">{user.email}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting || loading}
-          className={`w-full py-3 px-4 rounded-md text-white font-medium transition-colors ${
-            isSubmitting || loading
-              ? "bg-blue-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          }`}
-        >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center">
-              <span className="loading loading-spinner loading-sm mr-2"></span>
-              Submitting...
-            </span>
-          ) : (
-            "Submit Product"
-          )}
-        </button>
-      </form>
+          {/* Submit Button */}
+          <div className="pt-5">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting || loading}
+                className={`ml-3 inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                  isSubmitting || loading
+                    ? "bg-indigo-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                }`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit Product"
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
