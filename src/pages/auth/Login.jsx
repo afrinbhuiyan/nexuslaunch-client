@@ -17,7 +17,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await signInUser(email, password).then
+      const result = await signInUser(email, password);
       const loggedInUser = result.user;
 
       const saved = await saveUser(axiosSecure, loggedInUser);
@@ -42,11 +42,14 @@ const Login = () => {
             <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
             <p className="text-indigo-100">Sign in to your account</p>
           </div>
-          
+
           <div className="p-6 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Email
                 </label>
                 <input
@@ -62,7 +65,10 @@ const Login = () => {
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Password
                   </label>
                   <button
@@ -70,7 +76,7 @@ const Login = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-xs text-indigo-600 hover:text-indigo-800"
                   >
-                    {showPassword ? 'Hide' : 'Show'}
+                    {showPassword ? "Hide" : "Show"}
                   </button>
                 </div>
                 <div className="relative">
@@ -85,7 +91,10 @@ const Login = () => {
                   />
                 </div>
                 <div className="text-right">
-                  <Link to="/forgot-password" className="text-xs text-indigo-600 hover:text-indigo-800">
+                  <Link
+                    to="/forgot-password"
+                    className="text-xs text-indigo-600 hover:text-indigo-800"
+                  >
                     Forgot password?
                   </Link>
                 </div>
@@ -94,17 +103,37 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                className={`w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition ${
+                  loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Logging in...
                   </span>
-                ) : 'Login'}
+                ) : (
+                  "Login"
+                )}
               </button>
             </form>
 
@@ -114,7 +143,9 @@ const Login = () => {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 bg-white text-gray-500">
+                    Or continue with
+                  </span>
                 </div>
               </div>
             </div>
@@ -123,7 +154,10 @@ const Login = () => {
 
             <p className="mt-6 text-center text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <Link
+                to="/register"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
                 Register here
               </Link>
             </p>
