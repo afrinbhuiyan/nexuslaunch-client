@@ -19,7 +19,7 @@ const ProductDetails = () => {
     const fetchData = async () => {
       try {
         const [productRes, reviewRes] = await Promise.all([
-          axiosSecure.get(`/api/products/${id}`),
+          axiosSecure.get(`/api/products/id/${id}`),
           axiosSecure.get(`/api/reviews?productId=${id}`),
         ]);
 

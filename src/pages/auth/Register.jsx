@@ -46,6 +46,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
+      // Validation
       if (!name || !email || !password) {
         throw new Error("Please fill in all fields");
       }
@@ -53,8 +54,8 @@ const Register = () => {
         throw new Error("Password must be at least 6 characters");
       }
 
+      // Image handling
       let photoURL = "https://i.ibb.co/4pDNDk1/avatar.png";
-
       if (image) {
         try {
           photoURL = await uploadImageToImgBB(image);
@@ -64,32 +65,53 @@ const Register = () => {
         }
       }
 
+      // Create Firebase user
       const userCredential = await createUser(email, password);
+      const user = userCredential.user;
 
+      // Update profile
       await updateUserProfile({
         displayName: name,
         photoURL: photoURL,
       });
 
-      const saved = await saveUser(axiosSecure, userCredential.user);
+      // Save user to database
+      const userData = {
+        name,
+        email,
+        image: photoURL,
+        role: "user",
+        isSubscribed: false,
+        uid: user.uid,
+      };
+
+      const saved = await saveUser(axiosSecure, userData);
       if (!saved) {
-        toast.error("User registration failed to save in DB.");
-        return;
+        throw new Error("Failed to save user data");
       }
 
       toast.success("Registration successful! Redirecting...");
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      navigate("/");
+      setTimeout(() => navigate("/"), 1500);
     } catch (error) {
       console.error("Registration error:", error);
 
+      // Handle specific Firebase errors
       let errorMessage = "Registration failed. Please try again.";
-      if (error.code === "auth/email-already-in-use") {
-        errorMessage = "This email is already registered. Please login instead.";
-      } else if (error.code === "auth/weak-password") {
-        errorMessage = "Password should be at least 6 characters";
-      } else if (error.code === "auth/invalid-email") {
-        errorMessage = "Please enter a valid email address";
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          errorMessage = "Email already in use. Please login instead.";
+          break;
+        case "auth/weak-password":
+          errorMessage = "Password should be at least 6 characters";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "Please enter a valid email address";
+          break;
+        default:
+          if (error.message.includes("Failed to save user data")) {
+            errorMessage =
+              "Account created but profile setup failed. Please update your profile later.";
+          }
       }
 
       toast.error(errorMessage, { duration: 5000 });
@@ -104,7 +126,9 @@ const Register = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header Section */}
           <div className="bg-indigo-600 py-5 px-6">
-            <h2 className="text-2xl font-bold text-white">Create Your Account</h2>
+            <h2 className="text-2xl font-bold text-white">
+              Create Your Account
+            </h2>
             <p className="text-indigo-100">Join our community today</p>
           </div>
 
@@ -122,7 +146,9 @@ const Register = () => {
                   <div className="relative">
                     <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-indigo-500">
                       <img
-                        src={imagePreview || "https://i.ibb.co/4pDNDk1/avatar.png"}
+                        src={
+                          imagePreview || "https://i.ibb.co/4pDNDk1/avatar.png"
+                        }
                         alt="Profile preview"
                         className="h-full w-full object-cover"
                       />
@@ -150,7 +176,10 @@ const Register = () => {
 
               {/* Name Field */}
               <div className="space-y-2">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Full Name
                 </label>
                 <input
@@ -167,7 +196,10 @@ const Register = () => {
 
               {/* Email Field */}
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Email
                 </label>
                 <input
@@ -185,7 +217,10 @@ const Register = () => {
               {/* Password Field */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Password
                   </label>
                   <button
@@ -193,7 +228,7 @@ const Register = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-xs text-indigo-600 hover:text-indigo-800"
                   >
-                    {showPassword ? 'Hide' : 'Show'}
+                    {showPassword ? "Hide" : "Show"}
                   </button>
                 </div>
                 <input
@@ -214,17 +249,37 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                className={`w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition ${
+                  isLoading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Registering...
                   </span>
-                ) : 'Register'}
+                ) : (
+                  "Register"
+                )}
               </button>
             </form>
 
@@ -234,7 +289,9 @@ const Register = () => {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 bg-white text-gray-500">
+                    Or continue with
+                  </span>
                 </div>
               </div>
             </div>
@@ -243,7 +300,10 @@ const Register = () => {
 
             <p className="mt-6 text-center text-sm text-gray-600">
               Already have an account?{" "}
-              <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <Link
+                to="/login"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
                 Login here
               </Link>
             </p>

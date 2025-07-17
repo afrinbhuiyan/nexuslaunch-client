@@ -17,7 +17,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await signInUser(email, password);
+      const result = await signInUser(email, password).then
       const loggedInUser = result.user;
 
       const saved = await saveUser(axiosSecure, loggedInUser);

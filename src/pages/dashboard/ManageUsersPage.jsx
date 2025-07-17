@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { toast } from "react-hot-toast";
-import { FiSearch, FiUser, FiUserCheck, FiUserX, FiShield, FiEdit2, FiTrash2 } from "react-icons/fi";
+import {
+  FiSearch,
+  FiUser,
+  FiUserCheck,
+  FiUserX,
+  FiShield,
+  FiEdit2,
+  FiTrash2,
+} from "react-icons/fi";
 import { FaUserShield, FaUserCog } from "react-icons/fa";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const ManageUsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -14,7 +22,7 @@ const ManageUsersPage = () => {
     const fetchUsers = async () => {
       try {
         const res = await axiosSecure.get("/api/users");
-        setUsers(res.data);
+        setUsers(res.data.users);
       } catch {
         toast.error("Failed to load users");
       } finally {
@@ -29,26 +37,42 @@ const ManageUsersPage = () => {
     try {
       await axiosSecure.patch(`/api/users/role/${userId}`, { role: newRole });
       toast.success(`Role updated to ${newRole}`);
-      setUsers(prev => prev.map(u => (u._id === userId ? { ...u, role: newRole } : u)))
+      setUsers((prev) =>
+        prev.map((u) => (u._id === userId ? { ...u, role: newRole } : u))
+      );
     } catch {
       toast.error("Failed to update role");
     }
   };
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = Array.isArray(users)
+    ? users.filter(
+        (user) =>
+          user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const getRoleBadge = (role) => {
     const roles = {
-      admin: { color: "bg-purple-100 text-purple-800", icon: <FaUserShield className="mr-1" /> },
-      moderator: { color: "bg-blue-100 text-blue-800", icon: <FaUserCog className="mr-1" /> },
-      user: { color: "bg-green-100 text-green-800", icon: <FiUser className="mr-1" /> }
+      admin: {
+        color: "bg-purple-100 text-purple-800",
+        icon: <FaUserShield className="mr-1" />,
+      },
+      moderator: {
+        color: "bg-blue-100 text-blue-800",
+        icon: <FaUserCog className="mr-1" />,
+      },
+      user: {
+        color: "bg-green-100 text-green-800",
+        icon: <FiUser className="mr-1" />,
+      },
     };
     const roleData = roles[role] || roles.user;
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleData.color}`}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleData.color}`}
+      >
         {roleData.icon}
         {role}
       </span>
@@ -71,7 +95,9 @@ const ManageUsersPage = () => {
             <FiUserCheck className="mr-2 text-indigo-600" />
             User Management
           </h2>
-          <p className="text-gray-600">Manage all registered users and their roles</p>
+          <p className="text-gray-600">
+            Manage all registered users and their roles
+          </p>
         </div>
         <div className="relative mt-4 md:mt-0">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -92,19 +118,34 @@ const ManageUsersPage = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   User
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Email
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Status
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Role
                 </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Actions
                 </th>
               </tr>
@@ -112,7 +153,10 @@ const ManageUsersPage = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={user._id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
@@ -123,8 +167,13 @@ const ManageUsersPage = () => {
                           />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                          <div className="text-sm text-gray-500">Joined {new Date(user.createdAt).toLocaleDateString()}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {user.name}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Joined{" "}
+                            {new Date(user.createdAt).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -152,7 +201,9 @@ const ManageUsersPage = () => {
                       )}
                       {user.role !== "moderator" && (
                         <button
-                          onClick={() => handleRoleChange(user._id, "moderator")}
+                          onClick={() =>
+                            handleRoleChange(user._id, "moderator")
+                          }
                           className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                           title="Make Moderator"
                         >
@@ -172,7 +223,10 @@ const ManageUsersPage = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-sm text-gray-500">
+                  <td
+                    colSpan="5"
+                    className="px-6 py-4 text-center text-sm text-gray-500"
+                  >
                     No users found matching your search
                   </td>
                 </tr>
@@ -194,7 +248,8 @@ const ManageUsersPage = () => {
               <h4 className="font-medium text-gray-900">Admin</h4>
             </div>
             <p className="mt-2 text-sm text-gray-600">
-              Full access to all administrative functions including user management, content moderation, and system settings.
+              Full access to all administrative functions including user
+              management, content moderation, and system settings.
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
@@ -203,7 +258,8 @@ const ManageUsersPage = () => {
               <h4 className="font-medium text-gray-900">Moderator</h4>
             </div>
             <p className="mt-2 text-sm text-gray-600">
-              Can review and approve content, manage reports, but cannot modify user roles or system settings.
+              Can review and approve content, manage reports, but cannot modify
+              user roles or system settings.
             </p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
@@ -212,7 +268,8 @@ const ManageUsersPage = () => {
               <h4 className="font-medium text-gray-900">Regular User</h4>
             </div>
             <p className="mt-2 text-sm text-gray-600">
-              Standard platform access. Can submit content and interact with other users according to platform rules.
+              Standard platform access. Can submit content and interact with
+              other users according to platform rules.
             </p>
           </div>
         </div>

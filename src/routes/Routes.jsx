@@ -22,6 +22,8 @@ import ManageCouponPage from "../pages/dashboard/ManageCouponPage";
 import UserRoute from "./UserRoute";
 import ModeratorRoute from "./ModeratorRoute";
 import AdminRoute from "./AdminRoute";
+import About from "../components/About";
+import Contact from "../components/Contact";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -46,6 +48,14 @@ export const router = createBrowserRouter([
             <ProductDetails />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/about",
+        Component: About,
+      },
+      {
+        path: "/contact",
+        Component: Contact,
       },
       {
         path: "/login",

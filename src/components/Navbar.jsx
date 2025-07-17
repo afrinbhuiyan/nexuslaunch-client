@@ -35,6 +35,15 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-10">
             <Link
+              to="/"
+              className="font-medium uppercase text-gray-700 hover:text-[#766df4] transition-colors relative group"
+            >
+              <span className="relative">
+                Home
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#766df4] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </Link>
+            <Link
               to="/products"
               className="font-medium uppercase text-gray-700 hover:text-[#766df4] transition-colors relative group"
             >

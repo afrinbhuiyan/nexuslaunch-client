@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { WithContext as ReactTags } from "react-tag-input";
 import { uploadImageToImgBB } from "../../utils/imageUpload";
@@ -13,15 +13,9 @@ import {
   FiLink,
   FiDollarSign,
   FiGrid,
+  FiAlertCircle,
 } from "react-icons/fi";
 
-const KeyCodes = {
-  comma: 188,
-  enter: 13,
-  space: 32,
-};
-
-const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.space];
 
 const AddProduct = () => {
   const { user } = useAuth();
@@ -30,39 +24,9 @@ const AddProduct = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageURL, setImageURL] = useState("");
   const [tags, setTags] = useState([]);
-  const [canAdd, setCanAdd] = useState(true);
   const reactTagsRef = useRef(null);
   const formRef = useRef(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkAddPermission = async () => {
-      try {
-        const subRes = await axiosSecure.get(
-          `/api/users/subscription-status?email=${user.email}`
-        );
-        const isSubscribed = subRes.data?.isSubscribed;
-
-        if (!isSubscribed) {
-          const countRes = await axiosSecure.get(
-            `/api/products/user-count?email=${user.email}`
-          );
-          const productCount = countRes.data.count || 0;
-
-          if (productCount >= 1) {
-            setCanAdd(false);
-          }
-        }
-      } catch (err) {
-        console.error("Permission check failed:", err);
-        toast.error("Failed to check add permission.");
-      }
-    };
-
-    if (user?.email) {
-      checkAddPermission();
-    }
-  }, [user?.email, axiosSecure]);
 
   const handleImageUpload = async (e) => {
     const imageFile = e.target.files[0];
@@ -308,7 +272,6 @@ const AddProduct = () => {
                     handleDelete={handleDelete}
                     handleAddition={handleAddition}
                     handleDrag={handleDrag}
-                    delimiters={delimiters}
                     inputFieldPosition="inline"
                     placeholder={
                       tags.length === 0

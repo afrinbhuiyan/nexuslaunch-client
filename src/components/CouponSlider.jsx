@@ -3,16 +3,16 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
-import useAxiosSecure from "../hooks/useAxiosSecure";
 import { motion } from "framer-motion";
+import useAxios from "../hooks/useAxios";
 
 const CouponSlider = () => {
-  const axiosSecure = useAxiosSecure();
+  const axios = useAxios();
   const [coupons, setCoupons] = useState([]);
 
   useEffect(() => {
-    axiosSecure.get("/api/coupons/valid").then((res) => setCoupons(res.data));
-  }, [axiosSecure]);
+    axios.get("/api/coupons/valid").then((res) => setCoupons(res.data));
+  }, [axios]);
 
   if (coupons.length === 0) return null;
 
@@ -87,12 +87,6 @@ const CouponSlider = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-      
-      <style jsx>{`
-        .clip-path-ribbon {
-          clip-path: polygon(0 0, 100% 0, 100% 50%, 85% 100%, 0 100%);
-        }
-      `}</style>
     </div>
   );
 };

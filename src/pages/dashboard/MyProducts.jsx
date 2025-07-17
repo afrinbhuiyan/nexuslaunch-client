@@ -20,7 +20,7 @@ const MyProducts = () => {
     if (user?.email) {
       setLoading(true);
       axiosSecure
-        .get(`/api/products/user/${user.email}`)
+        .get(`/api/products/by-user/${user.email}`)
         .then((res) => {
           setProducts(Array.isArray(res.data) ? res.data : []);
         })
@@ -30,12 +30,12 @@ const MyProducts = () => {
         })
         .finally(() => setLoading(false));
     }
-  }, [user, axios]);
+  }, [user, axiosSecure]);
 
   const handleUpdate = async (updatedData) => {
     try {
       const res = await axios.patch(
-        `/api/products/${selectedProduct._id}`,
+        `/api/products/id/${selectedProduct._id}`,
         updatedData
       );
       const updated = res.data;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -8,77 +8,160 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../firebase/firebase.config";
 import { AuthContext } from "./AuthContext";
+import { auth } from "../firebase/firebase.config";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [role, setRole] = useState(null);
-  console.log(role);
+  const [user, setUser] = useState(null);       // user data object with selected fields + role
+  const [role, setRole] = useState(null);       // user role string
   const [loading, setLoading] = useState(true);
+  const prevUidRef = useRef(null);               // to prevent redundant fetches
 
-  console.log(user);
-
+  const axiosSecure = useAxiosSecure();
   const googleProvider = new GoogleAuthProvider();
 
-  const createUser = (email, password) => {
-    setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+  // Helper: normalize Firebase user to plain object with role
+  const normalizeUser = (firebaseUser, role) => {
+    if (!firebaseUser) return null;
+    return {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email,
+      displayName: firebaseUser.displayName || "",
+      photoURL: firebaseUser.photoURL || "",
+      role: role || "user",
+    };
   };
 
-  const signInUser = (email, password) => {
-    setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
-  };
+  // Fetch role from backend or create user if not exists
+  const fetchUserRole = async (firebaseUser) => {
+    try {
+      const response = await axiosSecure.get(`/api/users/by-email/${firebaseUser.email}`);
 
-  const googleLogin = () => {
-    setLoading(true);
-    return signInWithPopup(auth, googleProvider);
-  };
-
-  const logOut = () => {
-    setLoading(true);
-    return signOut(auth);
-  };
-
-  const updateUserProfile = (profile) => {
-    return updateProfile(auth.currentUser, profile).then(() => {
-      setUser({ ...auth.currentUser });
-      return true;
-    });
-  };
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        try {
-          const res = await fetch(
-            `http://localhost:5000/api/users/${currentUser.email}`
-          );
-          const dbUser = await res.json();
-          setRole(dbUser.role || "user");
-          setUser({
-            ...currentUser,
-            role: dbUser.role || "user",
-            isSubscribed: dbUser.isSubscribed || false,
-            image: dbUser.image || currentUser.photoURL,
-          });
-        } catch (err) {
-          console.error("Failed to fetch user from DB:", err);
-          setUser({ ...currentUser, role: "user" });
-        }
-      } else {
-        setUser(null);
+      if (!response.data?.success) {
+        throw new Error("User data not found");
       }
-      setLoading(false);
+
+      return response.data.user?.role || "user";
+    } catch (error) {
+      if (error.response?.status === 404) {
+        // User not found in DB, create default
+        const newUser = {
+          email: firebaseUser.email,
+          name: firebaseUser.displayName || "",
+          image: firebaseUser.photoURL || "",
+          role: "user",
+          isSubscribed: false,
+          uid: firebaseUser.uid,
+        };
+        await axiosSecure.put(`/api/users/email/${firebaseUser.email}`, newUser);
+        return "user";
+      }
+      console.error("Failed to fetch user role:", error);
+      return "user";
+    }
+  };
+
+  // Auth state change listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setLoading(true);
+
+      if (!firebaseUser) {
+        // Logged out
+        setUser(null);
+        setRole(null);
+        prevUidRef.current = null;
+        setLoading(false);
+        return;
+      }
+
+      // Prevent fetching role again for same user
+      if (prevUidRef.current === firebaseUser.uid) {
+        setLoading(false);
+        return;
+      }
+
+      prevUidRef.current = firebaseUser.uid;
+
+      try {
+        const userRole = await fetchUserRole(firebaseUser);
+        const normalizedUser = normalizeUser(firebaseUser, userRole);
+
+        setUser(normalizedUser);
+        setRole(userRole);
+      } catch (error) {
+        console.error("Auth state error:", error);
+        const normalizedUser = normalizeUser(firebaseUser, "user");
+        setUser(normalizedUser);
+        setRole("user");
+      } finally {
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [axiosSecure]);
 
-  // 4. Context Value
+  // Auth action methods
+
+  const createUser = async (email, password) => {
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      setRole("user"); // default role after sign up
+      return userCredential;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signInUser = async (email, password) => {
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // role update will happen automatically in onAuthStateChanged listener
+      return userCredential;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const googleLogin = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      // role update automatic in listener
+      return result;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logOut = async () => {
+    setLoading(true);
+    try {
+      await signOut(auth);
+      setUser(null);
+      setRole(null);
+      prevUidRef.current = null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateUserProfile = async (profile) => {
+    if (!auth.currentUser) throw new Error("No authenticated user");
+    const updatedUser = await updateProfile(auth.currentUser, profile);
+    // After update, sync user data in state
+    setUser((prev) => ({ ...prev, ...profile }));
+    return updatedUser;
+  };
+
+  // Provide context value
   const authInfo = {
     user,
+    role,
     loading,
     createUser,
     signInUser,
@@ -86,7 +169,6 @@ const AuthProvider = ({ children }) => {
     logOut,
     updateUserProfile,
     setUser,
-    role,
   };
 
   return (
