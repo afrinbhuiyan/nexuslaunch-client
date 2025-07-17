@@ -13,17 +13,16 @@ import { auth } from "../firebase/firebase.config";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // user data object with selected fields + role
-  const [role, setRole] = useState(null); // user role string
+  const [user, setUser] = useState(null); 
+  const [role, setRole] = useState(null); 
   const [loading, setLoading] = useState(true);
-  const prevUidRef = useRef(null); // to prevent redundant fetches
+  const prevUidRef = useRef(null);
 
   console.log(role);
 
   const axiosSecure = useAxiosSecure();
   const googleProvider = new GoogleAuthProvider();
 
-  // Helper: normalize Firebase user to plain object with role
   const normalizeUser = (firebaseUser, role) => {
     if (!firebaseUser) return null;
     return {
@@ -35,9 +34,27 @@ const AuthProvider = ({ children }) => {
     };
   };
 
-  // Fetch role from backend or create user if not exists
   const fetchUserRole = async (firebaseUser) => {
     try {
+      const ADMIN_EMAIL = "admin@example.com"; 
+      if (firebaseUser.email === ADMIN_EMAIL) {
+       
+        const adminUser = {
+          email: firebaseUser.email,
+          name: firebaseUser.displayName || "",
+          image: firebaseUser.photoURL || "",
+          role: "admin", // Set role to admin
+          isSubscribed: false,
+          uid: firebaseUser.uid,
+        };
+
+        await axiosSecure.put(
+          `/api/users/email/${firebaseUser.email}`,
+          adminUser
+        );
+        return "admin";
+      }
+
       const response = await axiosSecure.get(
         `/api/users/by-email/${firebaseUser.email}`
       );
@@ -49,12 +66,12 @@ const AuthProvider = ({ children }) => {
       return response.data.user?.role || "user";
     } catch (error) {
       if (error.response?.status === 404) {
-        // User not found in DB, create default
+        // User not found in DB, create default user
         const newUser = {
           email: firebaseUser.email,
           name: firebaseUser.displayName || "",
           image: firebaseUser.photoURL || "",
-          role: "user", // Set default role here
+          role: "user", // Default role
           isSubscribed: false,
           uid: firebaseUser.uid,
         };
