@@ -31,13 +31,14 @@ const AllProducts = () => {
   const [page, setPage] = useState(1);
   const [viewMode, setViewMode] = useState("grid");
   const [showFilters, setShowFilters] = useState(false);
+  const [sortOrder, setSortOrder] = useState("");
   const limit = 6;
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["products", search, page],
+    queryKey: ["products", search, page, sortOrder],
     queryFn: async () => {
       const res = await axios.get(
-        `/api/products?search=${search}&page=${page}&limit=${limit}`
+        `/api/products?search=${search}&page=${page}&limit=${limit}&sort=${sortOrder}`
       );
       return res.data;
     },
@@ -182,6 +183,28 @@ const AllProducts = () => {
                   <FiList />
                 </button>
               </div>
+              
+              {/* Sorting Dropdown */}
+              <div className="relative">
+                <select
+                  value={sortOrder}
+                  onChange={(e) => {
+                    setSortOrder(e.target.value);
+                    setPage(1);
+                  }}
+                  className="appearance-none pl-3 pr-8 py-1.5 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="">Sort by</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full text-sm"
@@ -219,7 +242,7 @@ const AllProducts = () => {
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="bg-white bg-opacity-60 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden animate-pulse"
+                  className="bg-white bg-opacity-60 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden animate-pulse h-full"
                 >
                   <div className="h-64 bg-gradient-to-br from-gray-200 to-gray-300"></div>
                   <div className="p-6 space-y-4">
@@ -257,7 +280,7 @@ const AllProducts = () => {
                   key={product._id}
                   variants={cardVariants}
                   whileHover="hover"
-                  className="group relative"
+                  className="group relative h-full flex flex-col"
                 >
                   {/* Glow effect */}
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-100/50 to-purple-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -308,7 +331,7 @@ const AllProducts = () => {
                     </div>
 
                     {/* Content section */}
-                    <div className="p-5">
+                    <div className="p-5 flex flex-col flex-grow">
                       <h3
                         className="text-lg font-bold text-gray-900 line-clamp-1 mb-2 hover:text-indigo-600 cursor-pointer"
                         onClick={() => navigate(`/products/${product._id}`)}
@@ -316,7 +339,7 @@ const AllProducts = () => {
                         {product.name}
                       </h3>
 
-                      <p className="text-gray-500 text-sm line-clamp-2 mb-4">
+                      <p className="text-gray-500 text-sm line-clamp-2 mb-4 flex-grow">
                         {product.description}
                       </p>
 
