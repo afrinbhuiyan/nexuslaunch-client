@@ -49,6 +49,12 @@ const DashboardSlider = ({ isOpen, closeSidebar }) => {
 
     // MODERATOR
     {
+      path: "/dashboard/profile",
+      name: "Profile",
+      icon: <FiUser size={20} />,
+      roles: ["moderator"],
+    },
+    {
       path: "/dashboard/review-products",
       name: "Review Products",
       icon: <FiFileText size={20} />,
@@ -62,6 +68,12 @@ const DashboardSlider = ({ isOpen, closeSidebar }) => {
     },
 
     // ADMIN
+    {
+      path: "/dashboard/profile",
+      name: "Profile",
+      icon: <FiUser size={20} />,
+      roles: ["admin"],
+    },
     {
       path: "/dashboard/statistics",
       name: "Statistics",
