@@ -27,6 +27,7 @@ import Contact from "../components/Contact";
 import DocumentationLayout from "../layouts/DocumentationLayout";
 import DocumentationPage from "../pages/documentation/DocumentationPage";
 import InstallationPage from "../pages/documentation/InstallationPage";
+import ConfigurationPage from "../pages/documentation/ConfigurationPage";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -160,10 +161,10 @@ export const router = createBrowserRouter([
         path: "installation",
         element: <InstallationPage />,
       },
-      // {
-      //   path: "configuration",
-      //   element: <ConfigurationPage />,
-      // },
+      {
+        path: "configuration",
+        element: <ConfigurationPage />,
+      },
       // {
       //   path: "authentication",
       //   element: <AuthenticationPage />,

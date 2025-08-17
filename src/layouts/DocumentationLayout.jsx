@@ -30,7 +30,7 @@ const DocumentationLayout = () => {
       items: [
         { name: "Introduction", path: "/docs" },
         { name: "Installation", path: "/docs/installation" },
-        { name: "Configuration", path: "/documentation/configuration" },
+        { name: "Configuration", path: "/docs/configuration" },
       ],
     },
     {
@@ -38,9 +38,9 @@ const DocumentationLayout = () => {
       icon: <FiDatabase className="w-4 h-4" />,
       color: "from-amber-500 to-orange-500",
       items: [
-        { name: "Authentication", path: "/documentation/authentication" },
-        { name: "API Reference", path: "/documentation/api" },
-        { name: "Database", path: "/documentation/database" },
+        { name: "Authentication", path: "/docs/authentication" },
+        { name: "API Reference", path: "/docs/api" },
+        { name: "Database", path: "/docs/database" },
       ],
     },
     {
@@ -48,8 +48,8 @@ const DocumentationLayout = () => {
       icon: <FiCode className="w-4 h-4" />,
       color: "from-emerald-500 to-teal-500",
       items: [
-        { name: "Deployment", path: "/documentation/deployment" },
-        { name: "Troubleshooting", path: "/documentation/troubleshooting" },
+        { name: "Deployment", path: "/docs/deployment" },
+        { name: "Troubleshooting", path: "/docs/troubleshooting" },
       ],
     },
   ];
