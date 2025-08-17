@@ -6,6 +6,7 @@ import {
   FaGithub,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { Link } from "react-router";
 
 const Footer = () => {
   return (
@@ -20,29 +21,62 @@ const Footer = () => {
             transition={{ delay: 0.1 }}
             className="space-y-4"
           >
-            <h2 className="text-2xl font-bold flex items-center text-white">
+            <Link to="/" className="text-2xl font-bold flex items-center text-white">
               <span className="bg-[#766df4] text-white p-2 rounded-lg mr-2">
                 N
               </span>
               NexusLaunch
-            </h2>
+            </Link>
             <p>
               The premier platform for developers to showcase their digital
               products and connect with users.
             </p>
             <div className="flex space-x-4">
-              {[FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaGithub].map(
-                (Icon, index) => (
-                  <motion.a
-                    key={index}
-                    whileHover={{ y: -3, scale: 1.1 }}
-                    href="#"
-                    className="bg-[#3a4246] p-2 rounded-full hover:bg-[#766df4] transition text-white"
-                  >
-                    <Icon className="text-lg" />
-                  </motion.a>
-                )
-              )}
+              <motion.a
+                whileHover={{ y: -3, scale: 1.1 }}
+                href="https://facebook.com/nexuslaunch"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#3a4246] p-2 rounded-full hover:bg-[#766df4] transition text-white"
+              >
+                <FaFacebook className="text-lg" />
+              </motion.a>
+              <motion.a
+                whileHover={{ y: -3, scale: 1.1 }}
+                href="https://twitter.com/nexuslaunch"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#3a4246] p-2 rounded-full hover:bg-[#766df4] transition text-white"
+              >
+                <FaTwitter className="text-lg" />
+              </motion.a>
+              <motion.a
+                whileHover={{ y: -3, scale: 1.1 }}
+                href="https://instagram.com/nexuslaunch"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#3a4246] p-2 rounded-full hover:bg-[#766df4] transition text-white"
+              >
+                <FaInstagram className="text-lg" />
+              </motion.a>
+              <motion.a
+                whileHover={{ y: -3, scale: 1.1 }}
+                href="https://linkedin.com/company/nexuslaunch"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#3a4246] p-2 rounded-full hover:bg-[#766df4] transition text-white"
+              >
+                <FaLinkedin className="text-lg" />
+              </motion.a>
+              <motion.a
+                whileHover={{ y: -3, scale: 1.1 }}
+                href="https://github.com/nexuslaunch"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#3a4246] p-2 rounded-full hover:bg-[#766df4] transition text-white"
+              >
+                <FaGithub className="text-lg" />
+              </motion.a>
             </div>
           </motion.div>
 
@@ -56,15 +90,31 @@ const Footer = () => {
               Quick Links
             </h3>
             <ul className="space-y-3">
-              {["Home", "Products", "Dashboard", "Pricing", "About"].map(
-                (item, index) => (
-                  <li key={index}>
-                    <a href="#" className="hover:text-[#766df4] transition">
-                      {item}
-                    </a>
-                  </li>
-                )
-              )}
+              <li>
+                <Link to="/" className="hover:text-[#766df4] transition">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/products" className="hover:text-[#766df4] transition">
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard" className="hover:text-[#766df4] transition">
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/pricing" className="hover:text-[#766df4] transition">
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="hover:text-[#766df4] transition">
+                  About
+                </Link>
+              </li>
             </ul>
           </motion.div>
 
@@ -78,19 +128,46 @@ const Footer = () => {
               Resources
             </h3>
             <ul className="space-y-3">
-              {[
-                "Documentation",
-                "API Reference",
-                "Community",
-                "Blog",
-                "Help Center",
-              ].map((item, index) => (
-                <li key={index}>
-                  <a href="#" className="hover:text-[#766df4] transition">
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <Link 
+                  to="/docs" 
+                  className="hover:text-[#766df4] transition"
+                >
+                  Documentation
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/api" 
+                  className="hover:text-[#766df4] transition"
+                >
+                  API Reference
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/community" 
+                  className="hover:text-[#766df4] transition"
+                >
+                  Community
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/blog" 
+                  className="hover:text-[#766df4] transition"
+                >
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/support" 
+                  className="hover:text-[#766df4] transition"
+                >
+                  Help Center
+                </Link>
+              </li>
             </ul>
           </motion.div>
 
@@ -107,16 +184,27 @@ const Footer = () => {
             <p>
               Subscribe to our newsletter for the latest updates and offers.
             </p>
-            <div className="flex max-w-md">
+            <form 
+              action="https://nexuslaunch.us21.list-manage.com/subscribe/post"
+              method="POST"
+              className="flex max-w-md"
+            >
               <input
                 type="email"
+                name="EMAIL"
                 placeholder="Enter your email"
                 className="px-4 py-3 w-full rounded-l-lg border-2 border-r-0 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200 text-gray-700 placeholder-gray-400 shadow-sm hover:border-gray-300"
+                required
               />
-              <button className="bg-[#766df4] text-white px-6 py-3 rounded-r-lg font-medium hover:bg-[#655be3] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#766df4] focus:ring-offset-2 whitespace-nowrap">
+              <input type="hidden" name="u" value="1234567890abcdef1234567890" />
+              <input type="hidden" name="id" value="1234567890" />
+              <button 
+                type="submit"
+                className="bg-[#766df4] text-white px-6 py-3 rounded-r-lg font-medium hover:bg-[#655be3] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#766df4] focus:ring-offset-2 whitespace-nowrap"
+              >
                 Join
               </button>
-            </div>
+            </form>
           </motion.div>
         </div>
 
@@ -135,27 +223,21 @@ const Footer = () => {
           </motion.p>
 
           <div className="flex space-x-6">
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              href="#"
-              className="text-[#a1a1a1] hover:text-[#766df4] transition"
-            >
-              Privacy Policy
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              href="#"
-              className="text-[#a1a1a1] hover:text-[#766df4] transition"
-            >
-              Terms of Service
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              href="#"
-              className="text-[#a1a1a1] hover:text-[#766df4] transition"
-            >
-              Cookies
-            </motion.a>
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <Link to="/privacy" className="text-[#a1a1a1] hover:text-[#766df4] transition">
+                Privacy Policy
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <Link to="/terms" className="text-[#a1a1a1] hover:text-[#766df4] transition">
+                Terms of Service
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <Link to="/cookies" className="text-[#a1a1a1] hover:text-[#766df4] transition">
+                Cookies
+              </Link>
+            </motion.div>
           </div>
         </div>
       </div>

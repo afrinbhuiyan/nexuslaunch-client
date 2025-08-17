@@ -24,6 +24,9 @@ import ModeratorRoute from "./ModeratorRoute";
 import AdminRoute from "./AdminRoute";
 import About from "../components/About";
 import Contact from "../components/Contact";
+import DocumentationLayout from "../layouts/DocumentationLayout";
+import DocumentationPage from "../pages/documentation/DocumentationPage";
+import InstallationPage from "../pages/documentation/InstallationPage";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -143,6 +146,44 @@ export const router = createBrowserRouter([
           </AdminRoute>
         ),
       },
+    ],
+  },
+  {
+    path: "/docs",
+    Component: DocumentationLayout,
+    children: [
+      {
+        index: true,
+        Component: DocumentationPage,
+      },
+      {
+        path: "installation",
+        element: <InstallationPage />,
+      },
+      // {
+      //   path: "configuration",
+      //   element: <ConfigurationPage />,
+      // },
+      // {
+      //   path: "authentication",
+      //   element: <AuthenticationPage />,
+      // },
+      // {
+      //   path: "api",
+      //   element: <APIPage />,
+      // },
+      // {
+      //   path: "database",
+      //   element: <DatabasePage />,
+      // },
+      // {
+      //   path: "deployment",
+      //   element: <DeploymentPage />,
+      // },
+      // {
+      //   path: "troubleshooting",
+      //   element: <TroubleshootingPage />,
+      // },
     ],
   },
 ]);
