@@ -28,7 +28,7 @@ const DocumentationLayout = () => {
       icon: <FiBook className="w-4 h-4" />,
       color: "from-purple-500 to-indigo-500",
       items: [
-        { name: "Introduction", path: "/documentation" },
+        { name: "Introduction", path: "/docs" },
         { name: "Installation", path: "/docs/installation" },
         { name: "Configuration", path: "/documentation/configuration" },
       ],
