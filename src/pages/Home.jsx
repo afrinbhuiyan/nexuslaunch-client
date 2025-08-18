@@ -7,6 +7,8 @@ import WeeklySpotlight from "../components/WeeklySpotlight";
 import TechStackTrends from "../components/products/TechStackTrends";
 import HowItWorks from "../components/HowItWorks";
 import KeyElementsSection from "../components/KeyElementsSection";
+import Benefits from "../components/Benefits";
+import Categories from "../components/Categories";
 
 const Home = () => {
   return (
@@ -14,6 +16,8 @@ const Home = () => {
       <Banner />
       <FeaturedProducts />
       <TrendingProducts />
+      <Benefits />
+      <Categories />
       {/* <WeeklySpotlight/> */}
       {/* <TechStackTrends/> */}
       <HowItWorks />
